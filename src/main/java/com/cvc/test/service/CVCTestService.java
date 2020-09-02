@@ -34,7 +34,7 @@ public class CVCTestService {
 		calculateTax(transfer);
 		return repository.save(transfer);
 	}
-
+	
 	public List<Transfer> findTransferType(OffsetDateTime transferDate, OffsetDateTime dateSchedule, Double value) {
 		return repository.findTransferType(transferDate, dateSchedule, value);
 	}

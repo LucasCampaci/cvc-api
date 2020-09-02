@@ -17,7 +17,7 @@ import lombok.EqualsAndHashCode;
 
 @NamedQuery(
         name="findTransferType",
-        query="select t from Transfer t where date(t.transferDate) = date(:transferDate) and date(t.dateSchedule) = date(:dateSchedule) and t.value = :value"
+        query="select t from Transfer t where trunc(t.transferDate) = trunc(:transferDate) and trunc(t.dateSchedule) = trunc(:dateSchedule) and t.value = :value"
 )
 
 @Data

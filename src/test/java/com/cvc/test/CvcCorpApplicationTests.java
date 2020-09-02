@@ -1,30 +1,56 @@
 package com.cvc.test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.OffsetDateTime;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.cvc.test.domain.exception.CVCException;
 import com.cvc.test.domain.model.Transfer;
 import com.cvc.test.service.CVCTestService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-class CvcCorpApplicationTests {
+public class CvcCorpApplicationTests {
 
 	@Autowired
 	private CVCTestService service;
 	
-//	@Test
-	public void testNewAccount() {
+	@Test
+	public void testNewTransfer_Sucess() {
+		Transfer transfer = new Transfer();
 		
+		transfer.setOriginAccount("XXXXXX");
+		transfer.setAccountDestination("YYYYYY");
+		transfer.setDateSchedule(OffsetDateTime.now());
+		transfer.setTransferDate(OffsetDateTime.now().plusDays(1));
+		transfer.setValue(10d);
+		
+		Transfer newTransfer = service.save(transfer);
+		
+		assertThat(newTransfer).isNotNull();
+		assertThat(newTransfer.getId()).isNotNull();
 	}
 	
+	@Test(expected = CVCException.class)
+	public void testNewTransfer_InvalidValue() {
+		Transfer transfer = new Transfer();
+		
+		transfer.setOriginAccount("XXXXXX");
+		transfer.setAccountDestination("YYYYYY");
+		transfer.setDateSchedule(OffsetDateTime.now());
+		transfer.setTransferDate(OffsetDateTime.now().plusDays(1));
+		transfer.setValue(null);
+		
+		service.save(transfer);
+	}
+
 	@Test
 	public void testTaxCalcZeroDay() {
 		Transfer transfer = new Transfer();
