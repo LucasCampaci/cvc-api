@@ -3,6 +3,7 @@ package com.cvc.test.api.controller;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cvc.test.api.model.TransferModelInput;
 import com.cvc.test.api.model.TransferModelOutput;
+import com.cvc.test.domain.exception.CVCException;
 import com.cvc.test.domain.model.TaxEnum;
 import com.cvc.test.domain.model.Transfer;
 import com.cvc.test.service.CVCTestService;
@@ -58,8 +60,14 @@ public class CVCTestController {
 			@PathVariable String dateSchedule, 
 			@PathVariable Double value) {
 		
-		OffsetDateTime transferDateOffset = LocalDate.parse(transferDate).atStartOfDay(ZoneId.of(LocaleContextHolder.getTimeZone().getID())).toOffsetDateTime();
-		OffsetDateTime dateScheduleOffset = LocalDate.parse(dateSchedule).atStartOfDay(ZoneId.of(LocaleContextHolder.getTimeZone().getID())).toOffsetDateTime();		
+		OffsetDateTime transferDateOffset;
+		OffsetDateTime dateScheduleOffset;
+		try {
+			transferDateOffset = LocalDate.parse(transferDate).atStartOfDay(ZoneId.of(LocaleContextHolder.getTimeZone().getID())).toOffsetDateTime();
+			dateScheduleOffset = LocalDate.parse(dateSchedule).atStartOfDay(ZoneId.of(LocaleContextHolder.getTimeZone().getID())).toOffsetDateTime();	
+		} catch (DateTimeParseException e) {
+			throw new CVCException("invalidDate");
+		}
 		
 		List<Transfer> transfers = service.findTransferType(transferDateOffset, dateScheduleOffset, value);
 				
